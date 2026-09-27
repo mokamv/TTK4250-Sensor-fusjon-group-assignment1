@@ -136,9 +136,10 @@ class ModelIMU:
         A_c[block_3x3(0, 1)] = np.eye(3)
         A_c[block_3x3(1, 2)] = - Rq @ S_acc
         A_c[block_3x3(2, 2)] = - S_omega
-        A_c[block_3x3(1, 3)] = - Rq
+        A_c[block_3x3(1, 3)] = - Rq @ self.accm_correction
         A_c[block_3x3(3, 3)] = - self.accm_bias_p * np.eye(3)
         A_c[block_3x3(4, 4)] = - self.gyro_bias_p * np.eye(3)
+        A_c[block_3x3(2, 4)] = - self.gyro_correction
         
         return A_c
 
@@ -197,7 +198,7 @@ class ModelIMU:
         VanLoanMatrix = scipy.linalg.expm(exponent)
         
         V1 = VanLoanMatrix[15:, 15:]
-        V2 = VanLoanMatrix[15:, 0:]
+        V2 = VanLoanMatrix[:15, 15:]
         Q_d = V1.T @ V2
 
         A_d = scipy.linalg.expm(A_c * dt)
@@ -225,9 +226,10 @@ class ModelIMU:
         x_est_prev_nom = x_est_prev.nom
         x_est_prev_err = x_est_prev.err
         Ad, GQGTd = self.get_discrete_error_diff(x_est_prev_nom, z_corr, dt)
-        P_pred = np.eye(15)  # TODO
+        
+        mean_pred = Ad @ x_est_prev_err.mean
+        P_pred = Ad @ x_est_prev_err.cov @ Ad.T + GQGTd
+        
+        x_err_pred = MultiVarGauss[ErrorState](ErrorState.from_array(mean_pred), P_pred)
 
-        # TODO remove this
-        x_err_pred = models_solu.ModelIMU.predict_err(
-            self, x_est_prev, z_corr, dt)
         return x_err_pred
