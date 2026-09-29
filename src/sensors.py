@@ -5,7 +5,6 @@ import numpy as np
 from senfuslib import MultiVarGauss
 from states import NominalState, GnssMeasurement, EskfState
 from utils.cross_matrix import get_cross_matrix
-from solution import sensors as sensors_solu
 
 
 @dataclass

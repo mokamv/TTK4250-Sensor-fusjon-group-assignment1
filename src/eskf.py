@@ -14,7 +14,6 @@ from quaternion import RotationQuaterion
 from utils.cross_matrix import get_cross_matrix
 from sensors import SensorGNSS
 from models import ModelIMU
-from solution import eskf as eskf_solu
 
 
 @dataclass

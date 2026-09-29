@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from scipy.spatial.transform import Rotation
 
 from senfuslib import NamedArray, AtIndex
-from solution import quaternion as quaternion_solu
 
 
 @dataclass

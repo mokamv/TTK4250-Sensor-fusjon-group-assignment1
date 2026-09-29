@@ -9,7 +9,6 @@ from states import (ErrorState, ImuMeasurement,
 from quaternion import RotationQuaterion
 from utils.indexing import block_3x3
 from utils.cross_matrix import get_cross_matrix
-from solution import models as models_solu
 
 
 @dataclass
